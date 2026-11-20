@@ -1,0 +1,334 @@
+# UChicago bio seminar digest: configuration
+# -------------------------------------------------------------------------
+# Edit this file to change what appears in your weekly digest.
+# Run `python digest.py --explain` after editing to see what was kept or
+# dropped and why (written to out/explain-<date>.txt).
+
+timezone: America/Chicago
+
+# Your research interests. Seminars whose title, abstract or host matches
+# any of these appear in a "Picked for you" section at the top of the digest.
+# Matching is case-insensitive and matches word beginnings, so "microbio"
+# matches "microbiome" and "microbiology".
+interests: []
+  # - microbiome
+  # - single-molecule
+  # - CRISPR
+  # - T cell
+  # - Goldstein        # speaker or host names work too
+
+# Show a short preview of the following week at the bottom.
+include_next_week: true
+# Include PhD thesis defenses (they are labelled as such).
+include_thesis_defenses: true
+# Chemistry and PME often post talks with no abstract, so their topic can't
+# be judged. true = list them compactly at the end so nothing is missed.
+show_unclassified: true
+
+# -------------------------------------------------------------------------
+# Web page for a lab website (python digest.py --web site). See the README.
+web:
+  title: UChicago life science seminars
+  # The web page is public, so your personal interests aren't shown there.
+  show_interests: false
+  # auto = follows each visitor's light/dark setting; light = always light
+  theme: auto
+  # embed.html usually sits inside a light lab website
+  embed_theme: light
+
+# -------------------------------------------------------------------------
+# Tracks: each seminar is filed under one of these.
+tracks:
+  biology:        {label: Biology,        color: "#2F7A4F"}
+  medicine:       {label: Medicine,       color: "#6B4C9A"}
+  bioengineering: {label: Bioengineering, color: "#2A5D8F"}
+  chemistry:      {label: Chemistry,      color: "#B06A12"}
+  cancer:         {label: Cancer,         color: "#B5446E"}
+  grand_rounds:   {label: Grand rounds,   color: "#4F6D7A"}
+
+# Tracks listed here get their own compact section after the day-by-day
+# schedule instead of being mixed into it, e.g. [grand_rounds].
+# [] = every talk, grand rounds included, appears the same way in one schedule.
+separate_sections: []
+
+# Rules on the talk title or CME series name that override the posting
+# group's track (first match wins).
+track_rules:
+  - {pattern: "grand rounds", track: grand_rounds}
+  - {pattern: '\bUCCCC\b|comprehensive cancer center|cancer biology|ben may|cancer research', track: cancer}
+
+# -------------------------------------------------------------------------
+# Source 1: the central UChicago calendar (events.uchicago.edu, LiveWhale).
+# Most BSD departments, committees and institutes publish here, and their
+# own websites just embed it. Groups are listed by exact LiveWhale name;
+# run `python digest.py --list-groups` to see all 400+ names.
+#
+#   track:  where the group's talks are filed. "auto" = decide per event
+#           (clinical words -> medicine, otherwise biology).
+#   filter: "all"     keep every talk-like event from this group
+#           "bio"     keep only talks whose title or abstract looks bio-relevant
+#           "title"   keep only talks whose title looks bio-relevant (for
+#                     groups that mostly re-post other groups' events)
+#   title_must_match: optional regex the title must contain
+#   keep_title: optional regex; matching titles pass even under filter "bio"
+livewhale:
+  base_url: https://events.uchicago.edu
+  groups:
+    # Biological Sciences Division (umbrella)
+    - {name: BSD, track: auto, filter: all}
+    # re-posts talks from all over campus, so only bio-titled ones count
+    - {name: BSD Office of Graduate and Postdoctoral Affairs, track: auto, filter: title}
+    # Basic science departments, committees, programs
+    - {name: Ben May Department for Cancer Research, track: cancer, filter: all}
+    - {name: Biochemistry and Molecular Biology, track: biology, filter: all}
+    - {name: Biophysical Sciences, track: biology, filter: all}
+    # These committees re-post many other groups' events (even physics lectures),
+    # so re-posts need a bio-related title; their own series always pass.
+    - {name: Committee on Cancer Biology, track: cancer, filter: title, keep_title: '\bCCB\b|cancer biology'}
+    - {name: Committee on Development Regeneration and Stem Cell Biology, track: biology, filter: all}
+    - {name: Committee on Evolutionary Biology, track: biology, filter: all}
+    - {name: Committee on Immunology, track: biology, filter: title, keep_title: '\bCOI\b|immunolog'}
+    - {name: Committee on Microbiology, track: biology, filter: all}
+    - {name: Committee on Molecular Metabolism and Nutrition, track: biology, filter: all}
+    - {name: Department of Ecology and Evolution, track: biology, filter: all}
+    - {name: Department of Microbiology, track: biology, filter: all}
+    - {name: Duchossois Family Institute, track: biology, filter: all}
+    - {name: Genetics, track: biology, filter: all}
+    - {name: Graduate Program in Biochemistry and Molecular Biophysics, track: biology, filter: all}
+    - {name: Graduate Program in Cell and Molecular Biology, track: biology, filter: all}
+    - {name: Graduate Program in Ecology and Evolution, track: biology, filter: all}
+    - {name: Graduate Program in Integrative Biology, track: biology, filter: all}
+    - {name: Human Genetics, track: biology, filter: all}
+    - {name: Institute for Biophysical Dynamics, track: biology, filter: all}
+    - {name: Institute for Mind and Biology, track: biology, filter: all}
+    - {name: Molecular Genetics and Cell Biology, track: biology, filter: all}
+    - {name: Neurobiology, track: biology, filter: all}
+    - {name: Neuroscience Institute, track: biology, filter: all}
+    - {name: Learning and Memory Based at UChicago (LAMBUC), track: biology, filter: all}
+    - {name: Center for Cognitive and Social Neuroscience (CCSN), track: biology, filter: all}
+    # PCB Seminar (Fridays 10:30) and PCB Population Genetics Seminar; the
+    # program's website (compbio.uchicago.edu) shows this same calendar group.
+    - {name: Program in Computational Biology, track: biology, filter: all}
+    - {name: NSF-Simons National Institute for Theory and Mathematics in Biology, track: biology, filter: all}
+    - {name: Center for the Origins of Life, track: biology, filter: all}
+    - {name: Office of Shared Research Facilities, track: biology, filter: all}
+    # Medicine
+    - {name: Pritzker School of Medicine, track: medicine, filter: all}
+    - {name: Department of Medicine, track: medicine, filter: all}
+    - {name: Cardiology Section, track: medicine, filter: all}
+    - {name: Section of Genetic Medicine, track: medicine, filter: all}
+    - {name: Department of Pediatrics, track: medicine, filter: all}
+    - {name: Pathology, track: medicine, filter: all}
+    - {name: Department of Obstetrics and Gynecology, track: medicine, filter: all}
+    - {name: Department of Ophthalmology and Visual Science, track: medicine, filter: all}
+    - {name: Department of Radiology, track: medicine, filter: all}
+    - {name: Committee on Medical Physics, track: medicine, filter: all}
+    - {name: Public Health Sciences, track: medicine, filter: all}
+    # The cancer center also posts patient webinars and community outreach;
+    # title_must_match keeps only its research seminars and symposia.
+    - name: University of Chicago Comprehensive Cancer Center
+      track: cancer
+      filter: all
+      title_must_match: "seminar|symposium|lecture|grand rounds|retreat"
+    - {name: Jonas Center for Cellular Therapy, track: cancer, filter: all}
+    - {name: Community for Advancement of Physician Scientists, track: medicine, filter: all}
+    - {name: Center for Global Health, track: medicine, filter: all}
+    - {name: Center on Aging, track: medicine, filter: all}
+    - {name: Intellectual and Developmental Disability Research Center, track: medicine, filter: all}
+    - {name: The MacLean Center for Clinical Medical Ethics, track: medicine, filter: all}
+    - {name: CRI Event Calendar, track: medicine, filter: all}
+    # Molecular engineering (PME also has its own site, see below)
+    - {name: Pritzker School of Molecular Engineering, track: bioengineering, filter: bio}
+    - {name: PME Immunoengineering, track: bioengineering, filter: all}
+    # Chemistry
+    - {name: Chemistry, track: chemistry, filter: bio}
+    - {name: James Franck Institute, track: chemistry, filter: bio}
+
+  # Also scan the whole campus calendar for bio talks hosted by groups not
+  # listed above (e.g. Physics, Data Science Institute, Statistics).
+  # Only talks with clearly bio-relevant titles are kept.
+  campus_scan: true
+  campus_scan_ignore_groups:
+    - Court Theatre
+    - Logan Center
+    - Smart Museum
+    - Renaissance Society
+    - Doc Films
+
+# -------------------------------------------------------------------------
+# Source 2: UChicago Center for Continuing Medical Education (cme.uchicago.edu).
+# Every accredited UCMC grand rounds is a "Regularly Scheduled Series" here,
+# so this is the one place that lists them all (Surgery, Neurology, Radiology,
+# Psychiatry, OB/GYN, Anesthesia, Heme/Onc, Pathology, Pediatrics, ...).
+# Series are found by name each run, so the yearly renaming (CY26 -> CY27)
+# is handled automatically.
+cme:
+  enabled: true
+  base_url: https://cme.uchicago.edu
+  series_match: "grand rounds|seminar series"   # regex on series names
+  # The CME office also accredits Endeavor Health (NorthShore) series, whose
+  # codes start with NS or EH. false = UCMC series only (numeric codes).
+  include_affiliates: false
+  fetch_details: true                 # read each session page for the speaker
+  track: grand_rounds
+  # Research seminar series accredited through CME (e.g. Pathology's
+  # Pathobiology of Disease seminars) are filed under this track instead.
+  seminar_track: medicine
+  # One-off accredited courses (symposia) to include, by title. Cancer center
+  # symposia (e.g. its Developmental Therapeutics Symposium) are listed this way.
+  course_match: "ucccc|cancer|oncolog|tumou?r|developmental therapeutics"
+  # Series to leave out (regex on the series name). Examples:
+  exclude_series: []
+    # - coding insights
+    # - transplant mini bootcamp
+  # Session titles to leave out.
+  exclude_title:
+    - hipaa
+    - compliance training
+    - awareness training
+
+# -------------------------------------------------------------------------
+# Source 3: Pritzker School of Molecular Engineering website (Drupal).
+# PME's seminars are not on the central calendar.
+#   filter: bio  -> keep only bio-relevant talks
+#   filter: all  -> keep every talk (used for the Immunoengineering and
+#                   Bioengineering Institute's own listing)
+pme:
+  - name: PME events calendar
+    url: https://pme.uchicago.edu/news-events/events-calendar
+    track: bioengineering
+    filter: bio
+  - name: PME Immunoengineering & Bioengineering Institute
+    url: https://pme.uchicago.edu/immunoengineering-bioengineering-institute/events
+    track: bioengineering
+    filter: all
+
+# -------------------------------------------------------------------------
+# Source 4: seminar series posted as a schedule table on a web page.
+# Some series publish a season schedule table instead of calendar entries.
+# These pages often move each academic year: update the URL when the
+# digest's source report shows 0 entries for one of these.
+#   columns: header text in the page's table -> field
+#   time / duration_min / location: defaults when the table omits them
+schedule_tables:
+  - name: MGCB Thursdays
+    url: https://mgcb.uchicago.edu/events
+    track: biology
+    host_group: Molecular Genetics and Cell Biology
+    columns: {date: Date, speaker: Speaker, institution: Institution, host: Host, location: Location}
+    time: "16:00"
+    duration_min: 60
+  - name: IBD Interdisciplinary Research Seminar
+    url: https://ibd.uchicago.edu/2026/05/27/2025-2026-interdisciplinary-research-seminar-series-2/
+    track: biology
+    host_group: Institute for Biophysical Dynamics
+    columns: {date: Date, speaker: Name, institution: Institution}
+    time: "12:00"
+    duration_min: 60
+    location: Gordon Center for Integrative Science, Room W301
+
+  - name: BMB Academic Seminar Series
+    url: https://biochem.uchicago.edu/events/seminars
+    track: biology
+    host_group: Biochemistry and Molecular Biology
+    columns: {date: Date, speaker: Speaker, institution: Institution, host: Host}
+    time: "09:30"
+    duration_min: 60
+    location: Gordon Center for Integrative Science, Room W301
+
+# -------------------------------------------------------------------------
+# Source 5: seminars announced as news posts ("Save the date: ... Seminar")
+# with Guest Speaker / Topic / When / Where lines. Ben May announces its
+# department seminars and the Fitch Lecture this way.
+news_announcements:
+  - name: Ben May seminar announcements
+    site: https://benmay.uchicago.edu
+    title_match: "seminar|lecture|symposium"
+    track: cancer
+    host_group: Ben May Department for Cancer Research
+
+# -------------------------------------------------------------------------
+# Source 6: any iCalendar (.ics) feed, e.g. a lab's Google Calendar, a
+# journal club, or a WordPress "The Events Calendar" site (add ?ical=1).
+# Ecology & Evolution runs its seminar series from public Google Calendars
+# embedded on its website.
+ics_feeds:
+  - name: E&E Seminars (Google Calendar)
+    url: https://calendar.google.com/calendar/ical/4b8un89oqk4c2ir47pu1lj2j3g%40group.calendar.google.com/public/basic.ics
+    link: https://ecologyandevolution.uchicago.edu/ecology-evolution-seminars
+    track: biology
+    filter: all
+  - name: E&E Darwin's Weekly (Google Calendar)
+    url: https://calendar.google.com/calendar/ical/klu85tpcsv4ocf8fiq6mdlrg9o%40group.calendar.google.com/public/basic.ics
+    link: https://ecologyandevolution.uchicago.edu/events/darwins-weekly-seminars
+    track: biology
+    filter: all
+  - name: E&E Special Lectures (Google Calendar)
+    url: https://calendar.google.com/calendar/ical/ecolevo.students%40gmail.com/public/basic.ics
+    link: https://ecologyandevolution.uchicago.edu/events/special-lectures-miscellaneous-events
+    track: biology
+    filter: all
+
+# -------------------------------------------------------------------------
+# Source 7: schedules you enter by hand, for series that announce talks only
+# by email (see extra_seminars.yaml for the format).
+extra_seminars_file: extra_seminars.yaml
+
+# -------------------------------------------------------------------------
+# Your seminar list. The footer of each digest shows how many of the week's
+# talks each item has, so one that goes quiet is visible.
+#   match: regex on the posting group, source, series or host
+#   title: regex on the talk title (for series posted by another group)
+departments:
+  - {name: Ben May Department for Cancer Research, match: "ben may"}
+  - {name: Biochemistry and Molecular Biology, match: "biochemistry and molecular bio|\\bBMB\\b"}
+  - {name: Ecology and Evolution, match: "ecology and evolution|\\bE&E\\b"}
+  - {name: Human Genetics, match: "human genetics|^genetics$"}
+  - {name: Microbiology, match: "^department of microbiology$"}
+  - {name: Molecular Genetics and Cell Biology, match: "molecular genetics and cell biology|\\bMGCB\\b"}
+  - {name: Neurobiology, match: "neurobiology|neuroscience institute"}
+  - {name: Organismal Biology and Anatomy, match: "organismal|\\bOBA\\b"}
+  - {name: Pharmacological and Physiological Sciences, match: "pharmacolog|physiolog"}
+  - {name: Public Health Sciences, match: "public health sciences"}
+  - {name: Committee on Cancer Biology (CCB), match: "committee on cancer biology", title: "\\bCCB\\b"}
+  - {name: Committee on Immunology (COI), match: "committee on immunology", title: "\\bCOI\\b|committee on immunology"}
+  - {name: Committee on Microbiology (COM), match: "committee on microbiology", title: "committee on microbiology|\\bCOM\\b"}
+  - {name: "CME: Pathobiology of Disease", match: "pathobiology"}
+  - {name: "CME: grand rounds", match: "grand rounds", title: "grand rounds"}
+  - {name: UChicago Comprehensive Cancer Center, match: "comprehensive cancer center|\\bUCCCC\\b|^CME course$", title: "\\bUCCCC\\b"}
+  - {name: PME (bio-relevant), match: "molecular engineering|\\bPME\\b"}
+  - {name: Chemistry, match: "^chemistry$|james franck"}
+  - {name: Institute for Biophysical Dynamics (IBD), match: "institute for biophysical dynamics|\\bIBD\\b"}
+  - {name: Program in Computational Biology, match: "program in computational biology|\\bPCB\\b"}
+
+# -------------------------------------------------------------------------
+# Filtering rules (regular expressions, case-insensitive, matched on title).
+filters:
+  # Always keep, even if an exclude pattern below matches.
+  keep_title:
+    - grand rounds
+  # Drop administrative, admissions, career and resident-education events.
+  exclude_title:
+    - office hours?
+    - drop-?in
+    - information session
+    - info session
+    - candidate session
+    - financing your education
+    - applications? (open|due)
+    - deadline
+    - recruitment event
+    - career
+    - mychoice
+    - hot topics
+    - learning series
+    - (pre|post)-award
+    - bootcamp
+    - hands-on
+    - orientation
+    - happy hour
+    - reception$
+    - ^\s*(am|noon) conf\b
+    - \bmorning report\b
+    - board prep
+    - \*meded

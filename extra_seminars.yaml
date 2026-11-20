@@ -1,0 +1,50 @@
+# Hand-entered seminar schedules
+# ------------------------------------------------------------------------
+# Use this for series that announce talks only by email, so they don't
+# appear on any calendar the digest can read. As of November 2026 that
+# includes the Committee on Cancer Biology and Committee on Immunology
+# seminar series and the Rowley seminar series.
+#
+# Paste a quarter's schedule here when it arrives. If a talk later also
+# appears on a calendar, the two listings are merged automatically (matched
+# by date and speaker surname).
+#
+# Each series sets defaults; each talk needs a date and speaker and can
+# override anything else:
+#   - series: Name shown in the digest
+#     track: biology | medicine | cancer | ...   (see tracks in config.yaml)
+#     host_group: name shown as host
+#     time: "12:00"          24-hour clock
+#     duration_min: 60
+#     location: Building, Room
+#     url: page to link to
+#     talks:
+#       - {date: 2026-11-16, speaker: "Name, PhD", institution: "Univ", title: "Talk title", host: "Faculty host"}
+
+- series: Committee on Immunology Seminar
+  track: biology
+  host_group: Committee on Immunology
+  # Mondays 12:00-1:00 in BSLC 109 unless noted (immunology.uchicago.edu)
+  time: "12:00"
+  duration_min: 60
+  location: Biological Sciences Learning Center, Room 109
+  url: https://immunology.uchicago.edu/page/events-1
+  talks:
+    # Affiliation inferred (immunologist at Loyola Stritch); confirm from the announcement.
+    - {date: 2026-11-16, speaker: "Yee Ling Wu, PhD", institution: "Loyola University Chicago"}
+
+# - series: Committee on Cancer Biology Seminar
+#   track: cancer
+#   host_group: Committee on Cancer Biology
+#   time: "12:00"            # fill in from the announcement
+#   location: ""             # fill in from the announcement
+#   url: https://cancerbio.uchicago.edu/page/calendar
+#   talks:
+#     - {date: 2026-10-30, speaker: "Ana Gomes, PhD"}
+
+# - series: Rowley Seminar Series
+#   track: cancer
+#   time: "12:00"            # Wednesdays at noon
+#   location: ""             # fill in from the announcement
+#   talks:
+#     - {date: 2026-12-02, speaker: "Speaker Name", title: "Talk title"}
