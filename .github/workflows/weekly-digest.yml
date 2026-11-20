@@ -1,0 +1,90 @@
+yaml
+name: Seminar digest
+
+on:
+  schedule:
+    - cron: "0 11 * * *"     # every day 11:00 UTC = 5 am Chicago in winter, 6 am in summer
+  workflow_dispatch:          # "Run workflow" button for testing
+    inputs:
+      send_email:
+        description: "Send the email digest on this run"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write             # commit the weekly archive
+  pages: write                # publish the web page
+  id-token: write
+
+concurrency:
+  group: seminar-digest
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Is it Monday in Chicago?
+        id: day
+        run: |
+          if [ "$(TZ=America/Chicago date +%u)" = "1" ] || [ "${{ inputs.send_email }}" = "true" ]; then
+            echo "email=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "email=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the web page (and on Mondays, email the digest)
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          DIGEST_TO: ${{ secrets.DIGEST_TO }}
+          DIGEST_FROM: ${{ secrets.DIGEST_FROM }}
+        run: |
+          SEND=""
+          if [ "${{ steps.day.outputs.email }}" = "true" ] && [ -n "$SMTP_HOST" ]; then SEND="--send"; fi
+          python digest.py --explain --web site $SEND
+
+      - name: Keep this run's files as a download
+        uses: actions/upload-artifact@v4
+        with:
+          name: seminar-digest
+          path: |
+            out/
+            site/
+          retention-days: 30
+
+      - name: Archive Monday's digest in the repo
+        if: steps.day.outputs.email == 'true'
+        run: |
+          mkdir -p archive
+          cp out/digest-*.html archive/
+          git config user.name "seminar-digest-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add archive
+          git commit -m "Seminar digest for week of $(date +%F)" || echo "Nothing new to archive"
+          git push
+
+      - name: Prepare the web page for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
